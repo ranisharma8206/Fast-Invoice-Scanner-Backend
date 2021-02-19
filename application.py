@@ -2,6 +2,9 @@
 from os import access
 from flask import Flask, render_template, request
 from flask_socketio import SocketIO
+import urllib.parse
+import string 
+import random 
 from Connection import *
 
 app = Flask(__name__)
@@ -58,12 +61,22 @@ def add_scanner(data):
 
 
 @socketio.on('viewer_key_pressed')
-def scanner_key_pressed(data):
-    print('Message: ' + data["data"])
+def scanner_key_pressed():
+    print('Key presssed....')
+    viewer_id = request.sid
+    connected_pair = connections.access_objects(viewer_ws_id = viewer_id)
+    socketio.emit('send_scanner_key_pressed_signal', room=connected_pair.scanner_ws_id)
 
 @socketio.on('scanner_get_image')
 def scanner_get_image(data):
-    print('Message: ' + data["data"])
+    image_name = ''.join(random.choices(string.ascii_uppercase + string.digits, k = 15))
+    path = 'assets/images/' + image_name + '.png'
+    response = urllib.request.urlopen(data['data'])
+    with open(path, 'wb') as f:
+        f.write(response.file.read())
+    scanner_id = request.sid
+    connected_pair = connections.access_objects(scanner_ws_id = scanner_id)
+    socketio.emit('send_image_viewer', {'data' : path} , room=connected_pair.viewer_ws_id)
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)
