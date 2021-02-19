@@ -1,0 +1,20 @@
+<html>
+<head>
+    <title>Session</title>
+</head>
+<body>
+    <p id="demo">This is viewer</p>
+    <input type="text" id="username" name="username" autocomplete="off">
+    <button type="button" onclick="myFunction()">Connect</button>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.1/socket.io.js" integrity="sha512-oFOCo2/3DtjrJG4N27BjSLQWoiBv171sK6a+JiWjp/7agxC2nCUP358AqzxkBUb5jX8g6CYLPdSKQTbC0weCwA==" crossorigin="anonymous"></script>
+<script type="text/javascript" charset="utf-8">
+    var socket = io.connect();
+    socket.on('connect', function() {
+
+    });
+    function myFunction() {
+        socket.emit('viewer_connect', {data: document.getElementById("username").value});
+    }
+</script>
+</html>

@@ -1,0 +1,39 @@
+<html>
+<head>
+    <title>Session</title>
+</head>
+<body>
+    <p id="demo">This is scanner</p>
+    <div id="viewers_div"></div>
+    
+    <br><br>
+    <button type="button" onclick="myFunction()">Connect</button>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.1/socket.io.js" integrity="sha512-oFOCo2/3DtjrJG4N27BjSLQWoiBv171sK6a+JiWjp/7agxC2nCUP358AqzxkBUb5jX8g6CYLPdSKQTbC0weCwA==" crossorigin="anonymous"></script>
+<script type="text/javascript" charset="utf-8">
+    var socket = io.connect();
+    socket.on('connect', function() {
+        socket.emit('scanner_found');
+    });
+    socket.on('send_viewers_list', function(data) {
+        var select = document.createElement("select");
+        select.name = "viewers";
+        select.id = "viewers"
+        for (const val of data['data']) {
+            var option = document.createElement("option");
+            option.value = val;
+            option.text = val;
+            select.appendChild(option);
+        }
+        var label = document.createElement("label");
+        label.innerHTML = "Connect to a viewer: "
+        label.htmlFor = "viewers";
+        document.getElementById("viewers_div").appendChild(label).appendChild(select);
+    });
+    function myFunction() {
+        var e = document.getElementById("viewers");
+        var selected_viewer = e.options[e.selectedIndex].text;
+        socket.emit('scanner_connect', {data: selected_viewer});
+    }
+</script>
+</html>
