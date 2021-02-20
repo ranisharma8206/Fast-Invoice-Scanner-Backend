@@ -1,6 +1,7 @@
 
 from os import access
 from flask import Flask, render_template, request
+from flask_cors import CORS
 from flask_socketio import SocketIO
 import urllib.parse
 import string 
@@ -8,8 +9,9 @@ import random
 from Connection import *
 
 app = Flask(__name__)
+CORS(app)
 app.config['SECRET_KEY'] = 'secret!'
-socketio = SocketIO(app)
+socketio = SocketIO(app,cors_allowed_origins="*")
 
 @app.route('/')
 def sessions():
@@ -79,4 +81,5 @@ def scanner_get_image(data):
     socketio.emit('send_image_viewer', {'data' : path} , room=connected_pair.viewer_ws_id)
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True)
+    #socketio.run(app, debug=True)
+    app.run(host='0.0.0.0')
