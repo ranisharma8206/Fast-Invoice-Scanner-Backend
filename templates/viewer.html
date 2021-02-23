@@ -14,14 +14,14 @@
        
     });
     socket.on('send_image_viewer', function(data) {
-        console.log(data['data']);
+        console.log(data['img_url']);
     });
     function myFunction() {
-        socket.emit('viewer_connect', {data: document.getElementById("username").value});
+        socket.emit('viewer_connect', {username: document.getElementById("username").value});
     }
     document.addEventListener("keyup", function(event) {
         if (event.keyCode === 13) {
-            socket.emit('viewer_key_pressed');
+            socket.emit('viewer_key_press');
         }
     });
 </script>

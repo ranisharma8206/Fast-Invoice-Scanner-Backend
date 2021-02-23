@@ -85,9 +85,11 @@ def scanner_found():
 @socketio.on('scanner_connect')
 def scanner_connect(data):
     scanner_id = request.sid
-    viewer = connections.access_objects(username = data["username"])
+    viewer = connections.access_objects(username = data)
     if(viewer != None):
         viewer.scanner_ws_id = scanner_id
+
+
 
 # schema for data
 # {
@@ -110,7 +112,7 @@ def viewer_key_press():
 def scanner_get_image(data):
     image_name = ''.join(random.choices(string.ascii_uppercase + string.digits, k = 15))
     path = 'assets/images/' + image_name + '.jpeg'
-    response = urllib.request.urlopen(data['datauri'])
+    response = urllib.request.urlopen(data)
     with open(path, 'wb') as f:
         f.write(response.file.read())
     scanner_id = request.sid
