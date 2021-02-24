@@ -61,7 +61,7 @@ def disconnect():
 @socketio.on('viewer_connect')
 def viewer_connect(data):
     viewer_id = request.sid
-    connections.add_connection(data["username"], viewer_id) #TODO: Check if add_connection returned success.
+    connections.add_connection(data, viewer_id) #TODO: Check if add_connection returned success.
 
 
 # schema for data
