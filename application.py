@@ -1,19 +1,26 @@
 
 from os import access
-from flask import Flask, render_template, request
-from flask_cors import CORS
+from flask import Flask, render_template, request, jsonify
+from flask_cors import CORS, cross_origin
 from flask_socketio import SocketIO
 import urllib.parse
 import string 
 import random 
 from Connection import *
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/static')
+hostname = '192.168.43.88:5000'
+
 CORS(app)
 app.config['SECRET_KEY'] = 'nuha23nansi9qwjjas9qw9'
 socketio = SocketIO(app,cors_allowed_origins="*")
 
-
+# @app.after_request
+# def after_request(response):
+#   response.headers.add('Access-Control-Allow-Origin', '*')
+#   response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+#   response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+#   return response
 
 @app.route('/')
 def sessions():
@@ -26,6 +33,43 @@ def viewer():
 @app.route('/scanner')
 def scanner():
     return render_template('scanner.html')
+
+def saveImage(imageData):
+    response = urllib.request.urlopen(imageData)
+
+    filename=''.join(random.choices(string.ascii_uppercase +
+                             string.digits, k = 15))
+    file = 'static/assets/raw/'+filename+'.png'
+    with open(file, 'wb') as f:
+        f.write(response.file.read())
+    return filename
+
+@app.route('/uploadImage', methods = ['POST'])
+# @cross_origin()
+def uploadImage():
+    jsonObject=request.json
+    print(request)
+    print(request.__dict__.items())
+    print(jsonObject)
+    jsonObject=request.get_json(force=True)
+    username=jsonObject['username']
+    datauri=jsonObject['datauri']
+    filename = saveImage(datauri)
+    outFilePath = 'static/assets/raw/'+filename+'.png'
+
+    serverPath = 'http://'+hostname+'/'+outFilePath
+    # enhance('static/assets/raw/'+filename+'.png',outFilePath)
+
+
+
+    viewerId = connections.access_objects(username = username)
+
+    jsonString = '{"id":"'+filename+'","url":"'+serverPath+'","name":"'+filename+'"}'
+    print(viewerId)
+    socketio.emit('send_image_viewer',jsonString, room=viewerId.viewer_ws_id)
+
+    retData={"message" : "success"}
+    return jsonify(retData)
 
 #--------------------------------------------------------------------------------------------------------------
 #----------------------------------------------Socket IO Definations
@@ -113,7 +157,7 @@ def viewer_key_press():
 def scanner_get_image(data):
     print("SCANNER IMGAE-------------- FOUND!!")
     image_name = ''.join(random.choices(string.ascii_uppercase + string.digits, k = 15))
-    path = 'assets/images/' + image_name + '.jpeg'
+    path = 'static/assets/' + image_name + '.jpeg'
     response = urllib.request.urlopen(data)
     with open(path, 'wb') as f:
         f.write(response.file.read())
