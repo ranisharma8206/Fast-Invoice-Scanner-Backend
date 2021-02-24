@@ -34,6 +34,7 @@ def scanner():
 @socketio.on('connect')
 def connect():
     print("connected succesfully..................")
+    
 
 @socketio.on('disconnect')
 def disconnect():
@@ -110,6 +111,7 @@ def viewer_key_press():
 
 @socketio.on('scanner_get_image')
 def scanner_get_image(data):
+    print("SCANNER IMGAE-------------- FOUND!!")
     image_name = ''.join(random.choices(string.ascii_uppercase + string.digits, k = 15))
     path = 'assets/images/' + image_name + '.jpeg'
     response = urllib.request.urlopen(data)
