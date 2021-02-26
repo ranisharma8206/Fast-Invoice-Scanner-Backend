@@ -9,7 +9,7 @@ import random
 from Connection import *
 
 app = Flask(__name__, static_url_path='/static')
-hostname = '192.168.43.88:5000'
+hostname = 'testing.iitbhilai.ac.in:5000'
 
 CORS(app)
 app.config['SECRET_KEY'] = 'nuha23nansi9qwjjas9qw9'
