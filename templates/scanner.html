@@ -11,7 +11,7 @@
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.1/socket.io.js" integrity="sha512-oFOCo2/3DtjrJG4N27BjSLQWoiBv171sK6a+JiWjp/7agxC2nCUP358AqzxkBUb5jX8g6CYLPdSKQTbC0weCwA==" crossorigin="anonymous"></script>
 <script type="text/javascript" charset="utf-8">
-    var socket = io.connect();
+    var socket = io.connect("http://192.168.29.212:5000");
     socket.on('connect', function() {
         socket.emit('scanner_found');
     });

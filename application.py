@@ -9,7 +9,7 @@ import random
 from Connection import *
 
 app = Flask(__name__, static_url_path='/static')
-hostname = 'testing.iitbhilai.ac.in:5000'
+hostname = '192.168.29.212:5000'
 
 CORS(app)
 app.config['SECRET_KEY'] = 'nuha23nansi9qwjjas9qw9'
@@ -105,6 +105,7 @@ def disconnect():
 # }
 @socketio.on('viewer_connect')
 def viewer_connect(data):
+    print("Viewer connected")
     viewer_id = request.sid
     connections.add_connection(data, viewer_id) #TODO: Check if add_connection returned success.
 
